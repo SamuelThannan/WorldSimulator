@@ -51,6 +51,8 @@ namespace WorldSimulator
         public double Reputation { get; set; }
         public double Charisma { get; set; }
         public double Integrity { get; set; }
+        public string Mother { get; set; }
+        public string Father { get; set; }
 
         // Economic and survival
         public decimal Wealth { get; set; }
@@ -81,7 +83,7 @@ namespace WorldSimulator
 
         }
 
-        public Human MakeChild(Human partner)
+        public Human MakeChild(Human partner, Human partner2)
         {
             Random random = new Random();
             string[] maleNames = { "Noah", "Kane", "Abel", "Disable", "Frank", "Abraham" };
@@ -89,8 +91,59 @@ namespace WorldSimulator
 
             Gender childGender;
             string childName;
+            string father;
+            string mother;
 
-            if(random.Next(0, 2)  == 0)
+            if(partner.Gender == Gender.Male)
+            {
+                father = partner.Name;
+            }
+            if(partner.Gender == Gender.Female)
+            {
+                mother = partner.Name;
+            }
+
+            if (partner2.Gender == Gender.Male)
+            {
+                father = partner2.Name;
+            }
+            if (partner2.Gender == Gender.Female)
+            {
+                mother = partner2.Name;
+            }
+
+
+
+            if (random.Next(0, 2)  == 0)
+            {
+                childGender = Gender.Male;
+                childName = maleNames[random.Next(maleNames.Length)];
+            }
+            else
+            {
+                childGender = Gender.Female;
+                childName = femaleNames[random.Next(femaleNames.Length)];
+            }
+            
+            father = Father;
+            mother = Mother;
+            Human child = new Human(childName, childGender, partner.HomeLocation, true);
+            return child;
+        }
+
+        public void CreateHuman()
+        {
+            Random random = new Random();
+            string[] maleNames = { "Noah", "Kane", "Abel", "Disable", "Frank", "Abraham" };
+            string[] femaleNames = { "Lilith", "Sheniqua", "Sara", "Eva", "Alina", "Beyonce" };
+            string[] locations = { "Gothenburg", "Stockholm", "Warsaw", "Gdansk" };
+
+            Gender childGender;
+            string childName;
+            string location = locations[random.Next(locations.Length)];
+
+
+            if (random.Next(0, 2) == 0)
             {
                 childGender = Gender.Male;
                 childName = maleNames[random.Next(maleNames.Length)];
@@ -101,9 +154,8 @@ namespace WorldSimulator
                 childName = femaleNames[random.Next(femaleNames.Length)];
             }
 
-            
-            Human child = new Human(childName, childGender, partner.HomeLocation, true);
-            return child;
+
+            Human child = new Human(childName, childGender, location, true);
         }
 
         public void GetOlder()
@@ -111,9 +163,66 @@ namespace WorldSimulator
             Age++;
         }
 
+        public void Die()
+        {
+            IsAlive = false;
+            Population--;
+        }
+
+        public void Eat()
+        {
+            Random random = new Random();
+            if(Hunger > 0)
+            {
+                Hunger -= random.Next(0, 3);
+            }
+            EnergyLevel += 2;
+            Happiness += 2;
+        }
+
+        public void Sleep()
+        {
+            if (IsAlive)
+            {
+                EnergyLevel += 10;
+                SleepQuality += 10;
+            }
+        }
+
+        public void Work()
+        {
+            Wealth += 1000;
+            EnergyLevel -= 10;
+            StressLevel += 10;
+        }
+
+        public void Rest()
+        {
+            StressLevel -= 10;
+            Happiness += 10;
+            EnergyLevel += 10;
+        }
+
+        public void Speak()
+        {
+            Console.WriteLine($"{Name} says: Hello!");
+        }
+
+        public void PrintSummary()
+        {
+            Console.WriteLine($"Age: {Age} - Gender: {Gender} - Health: {Health} - Energy: {EnergyLevel} - Happiness: {Happiness}");
+        }
+
         public override string ToString()
         {
             return $"{Name} {DNA} {Gender} {Age}";
+        }
+
+        public void SimulateYear()
+        {
+            Random random = new Random();
+            GetOlder();
+
         }
 
         //public string SkinColor { get; set; }
